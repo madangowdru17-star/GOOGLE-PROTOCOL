@@ -1,1 +1,469 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>License Server - Premium Panel</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg2: #12121a;
+            --card: #1a1a2e;
+            --border: #2a2a3e;
+            --text: #ffffff;
+            --text2: #a0a0b0;
+            --red: #e94560;
+            --red2: #c73e54;
+            --green: #00ff88;
+            --yellow: #ffaa00;
+            --blue: #00bfff;
+            --purple: #bf00ff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg2); }
+        ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 4px; }
+        
+        .login-wrap { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: radial-gradient(circle, #1a1a2e, #0a0a0f); }
+        .login-box { background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid var(--border); width: 400px; box-shadow: 0 0 40px rgba(233,69,96,0.3); animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .login-box h1 { text-align: center; color: var(--red); margin-bottom: 30px; font-size: 28px; }
+        .login-box input { width: 100%; padding: 14px; margin-bottom: 15px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 16px; }
+        .login-box input:focus { outline: none; border-color: var(--red); box-shadow: 0 0 15px rgba(233,69,96,0.2); }
+        .login-box button { width: 100%; padding: 14px; background: var(--red); color: #fff; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; transition: all 0.3s; }
+        .login-box button:hover { background: var(--red2); box-shadow: 0 0 20px rgba(233,69,96,0.4); }
+        
+        .dash { display: flex; }
+        .sidebar { width: 220px; background: var(--bg2); min-height: 100vh; padding: 20px; border-right: 1px solid var(--border); position: fixed; }
+        .sidebar h2 { color: var(--red); margin-bottom: 30px; text-align: center; font-size: 18px; }
+        .nav { padding: 14px 15px; margin-bottom: 8px; cursor: pointer; border-radius: 10px; color: var(--text2); transition: all 0.3s; font-size: 14px; font-weight: 500; }
+        .nav:hover { background: var(--card); color: var(--text); transform: translateX(5px); }
+        .nav.active { background: var(--red); color: #fff; box-shadow: 0 0 20px rgba(233,69,96,0.3); }
+        .main { flex: 1; margin-left: 220px; padding: 30px; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header h1 { font-size: 28px; color: var(--text); }
+        .header .time { color: var(--text2); font-size: 14px; }
+        
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .stat { background: var(--card); padding: 25px; border-radius: 15px; border: 1px solid var(--border); text-align: center; transition: all 0.3s; cursor: pointer; position: relative; overflow: hidden; }
+        .stat:hover { transform: translateY(-5px); border-color: var(--red); box-shadow: 0 0 30px rgba(233,69,96,0.2); }
+        .stat .v { font-size: 36px; color: var(--red); font-weight: bold; }
+        .stat .l { color: var(--text2); font-size: 11px; text-transform: uppercase; margin-top: 8px; letter-spacing: 1px; }
+        .stat::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--red), var(--purple)); }
+        
+        .panel { background: var(--card); padding: 25px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .panel h3 { color: var(--red); margin-bottom: 20px; font-size: 20px; }
+        .panel input, .panel select { width: 100%; padding: 12px; margin-bottom: 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 14px; }
+        .panel input:focus, .panel select:focus { outline: none; border-color: var(--red); }
+        .panel label { display: block; margin-bottom: 5px; color: var(--text2); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-red { background: var(--red); color: #fff; }
+        .btn-red:hover { background: var(--red2); box-shadow: 0 0 20px rgba(233,69,96,0.4); transform: translateY(-2px); }
+        .btn-green { background: var(--green); color: #000; }
+        .btn-green:hover { box-shadow: 0 0 20px rgba(0,255,136,0.3); transform: translateY(-2px); }
+        .btn-yellow { background: var(--yellow); color: #000; }
+        .btn-blue { background: var(--blue); color: #000; }
+        .btn-sm { padding: 6px 12px; font-size: 11px; }
+        
+        .key-display { background: var(--bg2); padding: 20px; border-radius: 10px; border: 1px solid var(--green); margin-top: 20px; text-align: center; animation: fadeIn 0.5s; }
+        .key-display .key { font-size: 24px; color: var(--green); font-family: monospace; margin: 10px 0; font-weight: bold; }
+        .key-display .info { color: var(--text2); font-size: 13px; margin: 5px 0; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px; background: var(--bg2); color: var(--text2); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+        td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 13px; }
+        tr:hover { background: var(--bg2); }
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+        .badge-green { background: rgba(0,255,136,0.15); color: var(--green); }
+        .badge-red { background: rgba(255,0,68,0.15); color: #ff0044; }
+        .badge-yellow { background: rgba(255,170,0,0.15); color: var(--yellow); }
+        .mono { font-family: monospace; }
+        .search { width: 100%; padding: 12px; margin-bottom: 15px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); }
+        .search:focus { outline: none; border-color: var(--red); }
+        
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-row .full { grid-column: 1 / -1; }
+        
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; height: auto; position: relative; }
+            .main { margin-left: 0; }
+            .stats { grid-template-columns: 1fr 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    {% if login %}
+    <div class="login-wrap">
+        <div class="login-box">
+            <h1>LICENSE SERVER</h1>
+            {% if error %}
+            <p style="color:#ff0044; text-align:center; margin-bottom:15px;">{{ error }}</p>
+            {% endif %}
+            <form action="/admin/login" method="POST">
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit">LOGIN</button>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <div class="dash">
+        <div class="sidebar">
+            <h2>LICENSE SERVER</h2>
+            <div class="nav active" onclick="show('dashboard')">DASHBOARD</div>
+            <div class="nav" onclick="show('generate')">GENERATE KEY</div>
+            <div class="nav" onclick="show('bulk')">BULK GENERATE</div>
+            <div class="nav" onclick="show('keys')">LICENSE KEYS</div>
+            <div class="nav" onclick="show('devices')">DEVICES</div>
+            <div class="nav" onclick="show('logs')">LOGS</div>
+            <div class="nav" onclick="location.href='/admin/logout'" style="color:#ff0044;">LOGOUT</div>
+        </div>
+        
+        <div class="main">
+            <div class="header">
+                <h1>DASHBOARD</h1>
+                <div class="time" id="currentTime"></div>
+            </div>
+            
+            <div id="dashboardSection">
+                <div class="stats" id="statsGrid"></div>
+            </div>
+            
+            <div id="generateSection" class="panel" style="display:none;">
+                <h3>GENERATE LICENSE KEY</h3>
+                <div class="form-row">
+                    <div class="full">
+                        <label>Custom Prefix (Optional)</label>
+                        <input type="text" id="customPrefix" placeholder="e.g., MYAPP">
+                    </div>
+                    <div>
+                        <label>Duration Type</label>
+                        <select id="durationType">
+                            <option value="hours">HOURS</option>
+                            <option value="days" selected>DAYS</option>
+                            <option value="weeks">WEEKS</option>
+                            <option value="months">MONTHS</option>
+                            <option value="years">YEARS</option>
+                            <option value="lifetime">LIFETIME</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Duration Value</label>
+                        <input type="number" id="durationValue" value="30" min="1">
+                    </div>
+                    <div>
+                        <label>Max Devices</label>
+                        <input type="number" id="maxDevices" value="1" min="1">
+                    </div>
+                    <div>
+                        <label>Notes</label>
+                        <input type="text" id="notes" placeholder="Optional">
+                    </div>
+                    <div class="full">
+                        <button class="btn btn-red" onclick="generateKey()">GENERATE KEY</button>
+                    </div>
+                </div>
+                <div id="generatedKey"></div>
+            </div>
+            
+            <div id="bulkSection" class="panel" style="display:none;">
+                <h3>BULK GENERATE</h3>
+                <div class="form-row">
+                    <div class="full">
+                        <label>Custom Prefix (Optional)</label>
+                        <input type="text" id="bulkPrefix" placeholder="e.g., MYAPP">
+                    </div>
+                    <div>
+                        <label>Number of Keys</label>
+                        <input type="number" id="bulkCount" value="10" min="1" max="100">
+                    </div>
+                    <div>
+                        <label>Duration Type</label>
+                        <select id="bulkDurationType">
+                            <option value="hours">HOURS</option>
+                            <option value="days" selected>DAYS</option>
+                            <option value="weeks">WEEKS</option>
+                            <option value="months">MONTHS</option>
+                            <option value="years">YEARS</option>
+                            <option value="lifetime">LIFETIME</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Duration Value</label>
+                        <input type="number" id="bulkDurationValue" value="30" min="1">
+                    </div>
+                    <div>
+                        <label>Max Devices</label>
+                        <input type="number" id="bulkMaxDevices" value="1" min="1">
+                    </div>
+                    <div class="full">
+                        <button class="btn btn-red" onclick="bulkGenerate()">GENERATE BULK</button>
+                    </div>
+                </div>
+                <div id="bulkKeys"></div>
+            </div>
+            
+            <div id="keysSection" class="panel" style="display:none;">
+                <h3>LICENSE KEYS</h3>
+                <input type="text" class="search" id="keySearch" placeholder="Search keys..." onkeyup="filterKeys()">
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>KEY</th>
+                                <th>STATUS</th>
+                                <th>DEVICES</th>
+                                <th>DURATION</th>
+                                <th>CREATED</th>
+                                <th>EXPIRES</th>
+                                <th>NOTES</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="keysTable"></tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div id="devicesSection" class="panel" style="display:none;">
+                <h3>REGISTERED DEVICES</h3>
+                <input type="text" class="search" id="deviceSearch" placeholder="Search devices..." onkeyup="filterDevices()">
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>HWID</th>
+                                <th>LICENSE KEY</th>
+                                <th>DEVICE</th>
+                                <th>ANDROID</th>
+                                <th>MODEL</th>
+                                <th>IP</th>
+                                <th>LOGINS</th>
+                                <th>REGISTERED</th>
+                                <th>LAST LOGIN</th>
+                            </tr>
+                        </thead>
+                        <tbody id="devicesTable"></tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div id="logsSection" class="panel" style="display:none;">
+                <h3>LOGIN LOGS</h3>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>KEY</th>
+                                <th>HWID</th>
+                                <th>IP</th>
+                                <th>STATUS</th>
+                                <th>MESSAGE</th>
+                                <th>RESPONSE TIME</th>
+                                <th>TIME</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <script>
+        function show(section) {
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('generateSection').style.display = 'none';
+            document.getElementById('bulkSection').style.display = 'none';
+            document.getElementById('keysSection').style.display = 'none';
+            document.getElementById('devicesSection').style.display = 'none';
+            document.getElementById('logsSection').style.display = 'none';
+            document.getElementById(section + 'Section').style.display = 'block';
+            document.querySelectorAll('.nav').forEach(n => n.classList.remove('active'));
+            event.target.classList.add('active');
+            if (section === 'dashboard') loadStats();
+            if (section === 'keys') loadKeys();
+            if (section === 'devices') loadDevices();
+            if (section === 'logs') loadLogs();
+        }
+        
+        function updateTime() {
+            document.getElementById('currentTime').textContent = new Date().toLocaleString();
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+        
+        function loadStats() {
+            fetch('/api/admin/stats').then(r => r.json()).then(d => {
+                document.getElementById('statsGrid').innerHTML = `
+                    <div class="stat"><div class="v">${d.total_keys}</div><div class="l">TOTAL KEYS</div></div>
+                    <div class="stat"><div class="v">${d.active_keys}</div><div class="l">ACTIVE KEYS</div></div>
+                    <div class="stat"><div class="v">${d.total_devices}</div><div class="l">TOTAL DEVICES</div></div>
+                    <div class="stat"><div class="v">${d.total_logins}</div><div class="l">TOTAL LOGINS</div></div>
+                    <div class="stat"><div class="v">${d.failed_logins}</div><div class="l">FAILED LOGINS</div></div>
+                    <div class="stat"><div class="v">${d.active_sessions}</div><div class="l">ACTIVE SESSIONS</div></div>
+                    <div class="stat"><div class="v">${d.today_devices}</div><div class="l">TODAY DEVICES</div></div>
+                    <div class="stat"><div class="v">${d.today_logins}</div><div class="l">TODAY LOGINS</div></div>
+                `;
+            });
+        }
+        
+        function generateKey() {
+            const data = {
+                custom_prefix: document.getElementById('customPrefix').value,
+                duration_type: document.getElementById('durationType').value,
+                duration_value: document.getElementById('durationValue').value,
+                max_devices: document.getElementById('maxDevices').value,
+                notes: document.getElementById('notes').value
+            };
+            fetch('/api/admin/generate', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            }).then(r => r.json()).then(d => {
+                if (d.success) {
+                    document.getElementById('generatedKey').innerHTML = `
+                        <div class="key-display">
+                            <div style="color: var(--green); font-weight: bold;">KEY GENERATED SUCCESSFULLY</div>
+                            <div class="key">${d.key}</div>
+                            <div class="info">EXPIRES: ${d.expires}</div>
+                            <div class="info">DURATION: ${d.duration}</div>
+                            <div class="info">MAX DEVICES: ${d.max_devices}</div>
+                            <button class="btn btn-green btn-sm" onclick="navigator.clipboard.writeText('${d.key}')">COPY KEY</button>
+                        </div>
+                    `;
+                    loadStats();
+                }
+            });
+        }
+        
+        function bulkGenerate() {
+            const data = {
+                custom_prefix: document.getElementById('bulkPrefix').value,
+                count: document.getElementById('bulkCount').value,
+                duration_type: document.getElementById('bulkDurationType').value,
+                duration_value: document.getElementById('bulkDurationValue').value,
+                max_devices: document.getElementById('bulkMaxDevices').value
+            };
+            fetch('/api/admin/bulk-generate', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            }).then(r => r.json()).then(d => {
+                if (d.success) {
+                    let html = '<div class="key-display"><div style="color: var(--green); font-weight: bold;">GENERATED KEYS</div>';
+                    d.keys.forEach(k => {
+                        html += `<div class="mono" style="margin:8px 0; font-size:16px;">${k.key}</div>`;
+                    });
+                    html += '</div>';
+                    document.getElementById('bulkKeys').innerHTML = html;
+                    loadStats();
+                }
+            });
+        }
+        
+        function loadKeys() {
+            fetch('/api/admin/keys').then(r => r.json()).then(d => {
+                const tbody = document.getElementById('keysTable');
+                tbody.innerHTML = '';
+                d.keys.forEach(k => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td class="mono">${k.key}</td>
+                        <td><span class="badge ${k.active ? 'badge-green' : 'badge-red'}">${k.active ? 'ACTIVE' : 'DISABLED'}</span></td>
+                        <td>${k.device_count}/${k.max_devices}</td>
+                        <td>${k.duration_value} ${k.duration_type}</td>
+                        <td>${k.created}</td>
+                        <td>${k.expires}</td>
+                        <td>${k.notes || '-'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-red" onclick="deleteKey('${k.key}')">DEL</button>
+                            <button class="btn btn-sm ${k.active ? 'btn-red' : 'btn-green'}" onclick="toggleKey('${k.key}', ${!k.active})">${k.active ? 'DIS' : 'EN'}</button>
+                        </td>
+                    `;
+                });
+            });
+        }
+        
+        function loadDevices() {
+            fetch('/api/admin/devices').then(r => r.json()).then(d => {
+                const tbody = document.getElementById('devicesTable');
+                tbody.innerHTML = '';
+                d.devices.forEach(dev => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td class="mono">${dev.hwid}</td>
+                        <td class="mono">${dev.license_key}</td>
+                        <td>${dev.device_name}</td>
+                        <td>${dev.android_version}</td>
+                        <td>${dev.device_model}</td>
+                        <td>${dev.ip || '-'}</td>
+                        <td>${dev.login_count}</td>
+                        <td>${dev.registered}</td>
+                        <td>${dev.last_login}</td>
+                    `;
+                });
+            });
+        }
+        
+        function loadLogs() {
+            fetch('/api/admin/logs').then(r => r.json()).then(d => {
+                const tbody = document.getElementById('logsTable');
+                tbody.innerHTML = '';
+                d.logs.forEach(l => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td class="mono">${l.license_key}</td>
+                        <td class="mono">${l.hwid}</td>
+                        <td>${l.ip}</td>
+                        <td><span class="badge ${l.success ? 'badge-green' : 'badge-red'}">${l.success ? 'SUCCESS' : 'FAILED'}</span></td>
+                        <td>${l.message}</td>
+                        <td>${l.response_time.toFixed(3)}s</td>
+                        <td>${l.time}</td>
+                    `;
+                });
+            });
+        }
+        
+        function deleteKey(key) {
+            if (confirm('Delete this key?')) {
+                fetch('/api/admin/delete-key', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({key: key})
+                }).then(r => r.json()).then(() => { loadKeys(); loadStats(); });
+            }
+        }
+        
+        function toggleKey(key, active) {
+            fetch('/api/admin/toggle-key', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({key: key, active: active})
+            }).then(r => r.json()).then(() => { loadKeys(); loadStats(); });
+        }
+        
+        function filterKeys() {
+            const term = document.getElementById('keySearch').value.toLowerCase();
+            document.querySelectorAll('#keysTable tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
+            });
+        }
+        
+        function filterDevices() {
+            const term = document.getElementById('deviceSearch').value.toLowerCase();
+            document.querySelectorAll('#devicesTable tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
+            });
+        }
+        
+        {% if not login %}
+        loadStats();
+        {% endif %}
+    </script>
+</body>
+</html>
